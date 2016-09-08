@@ -1,0 +1,25 @@
+.progresso-wrap {
+  display: none;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  height: 3px;
+}
+
+.progresso-wrap.progresso-show {
+  display: block;
+}
+
+.progresso-wrap .progresso-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  background-color: #333;
+  -webkit-transition: all .4s ease-in;
+  -moz-transition: all .4s ease-in;
+  -o-transition: all .4s ease-in;
+  transition: all .4s ease-in;
+}

@@ -1,0 +1,22 @@
+{
+  "name": "progresso",
+  "version": "0.0.1",
+  "description": "",
+  "main": "src/progresso.js",
+  "scripts": {
+    "test": "gulp test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/schne324/progresso.git"
+  },
+  "author": "Harris Schneiderman",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/schne324/progresso/issues"
+  },
+  "homepage": "https://github.com/schne324/progresso#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1"
+  }
+}

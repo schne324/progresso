@@ -1,0 +1,23 @@
+{
+  "name": "progresso",
+  "description": "",
+  "main": "src/progresso.js",
+  "authors": [
+    "Harris Schneiderman"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "progress",
+    "bar",
+    "loader",
+    "loading"
+  ],
+  "homepage": "https://github.com/schne324/progresso",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
