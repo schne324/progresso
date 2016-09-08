@@ -8,7 +8,7 @@ $ bower install progresso
 
 ## Usage
 ```html
-<link rel='stylesheet' href='progresso.css'/>
+<link rel='stylesheet' href='bower_components/progresso.css' />
 <script src="bower_components/progresso.js"></script>
 <script>
 var progress = new Progresso();
