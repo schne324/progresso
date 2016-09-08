@@ -7,6 +7,8 @@ $ bower install progresso
 ```
 
 ## Usage
+Just include `progresso.css` and `progresso.js`.
+
 ```html
 <link rel='stylesheet' href='bower_components/progresso.css' />
 <script src="bower_components/progresso.js"></script>
