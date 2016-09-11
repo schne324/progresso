@@ -1,6 +1,7 @@
 'use strict';
 
 var defaults = {};
+var smoothInterval;
 
 function Progresso(userOpts) {
   userOpts = userOpts || {};
@@ -14,6 +15,7 @@ function Progresso(userOpts) {
   this.wrapper = this.fill.parentNode;
   this.going = false;
   this.currentValue = 0;
+  this.events = {};
 }
 
 Progresso.prototype.start = function() {
@@ -21,19 +23,34 @@ Progresso.prototype.start = function() {
   // ensure it is visible
   this.show();
   this.increment(randomBetween(3, 7));
+  // kick off a smooth loader...
+  this.smooth();
+
   var self = this;
   // randomly increment at a random interval
   (function loop() {
     if (!self.going) { return; }
 
-    var time = randomBetween(500, 3e3);
-    var inc = randomBetween(3, 11);
+    var time = randomBetween(500, 3e3); // between 500ms and 3s
+    var inc = randomBetween(3, 10); // between 3% and 10%
 
     setTimeout(function () {
       self.increment(inc);
       loop();
     }, time);
   }());
+};
+
+Progresso.prototype.smooth = function () {
+  var self = this;
+
+  smoothInterval = setInterval(function () {
+    if (!self.going) {
+      return clearInterval(smoothInterval);
+    }
+
+    self.increment(1);
+  }, 400);
 };
 
 Progresso.prototype.pause = function () {
@@ -46,26 +63,28 @@ Progresso.prototype.done = function () {
 };
 
 Progresso.prototype.goTo = function (n) {
+  var self = this;
+
   // ensure it is visible
   this.show();
 
   // prevent progress - stop at 100%
   if (n >= 100) {
     this.pause();
+    // trigger complete event (after 400ms for the css animation delay)...
+    setTimeout(function () {
+      self.trigger('complete');
+    }, 400);
     n = 100;
   }
 
   this.wrapper.setAttribute('aria-valuenow', n);
   this.fill.style.width = n + '%';
   this.currentValue = n;
+  this.trigger('change');
 };
 
 Progresso.prototype.increment = function (inc) {
-  if (inc >= 100) {
-    this.pause();
-    newValue = 100;
-  }
-
   this.goTo(this.currentValue + inc);
 };
 
@@ -75,6 +94,29 @@ Progresso.prototype.show = function () {
 
 Progresso.prototype.hide = function () {
   this.wrapper.classList.remove('progresso-show');
+};
+
+/**
+ * Events
+ */
+
+Progresso.prototype.on = function (eventType, fn) {
+  this.events[eventType] = fn;
+  return this;
+};
+
+Progresso.prototype.off = function (eventType) {
+  this.events[eventType] = null;
+  return this;
+};
+
+Progresso.prototype.trigger = function (eventType) {
+  var e = this.events[eventType];
+  if (e) {
+    e.call(this, {
+      type: eventType
+    });
+  }
 };
 
 function createProgresso() {
