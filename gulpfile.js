@@ -1,7 +1,10 @@
 'use strict';
 
 const gulp = require('gulp');
+const mochaPhantomJS = require('gulp-mocha-phantomjs');
 
 gulp.task('test', () => {
-  console.log('TODO: Write tests');
+  return gulp
+    .src('./test/index.html')
+    .pipe(mochaPhantomJS());
 });

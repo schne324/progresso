@@ -1,6 +1,6 @@
 'use strict';
 
-var defaults = {};
+var defaults = {}; // TODO: showClass, hideClass...
 var smoothInterval;
 
 function Progresso(userOpts) {
@@ -20,25 +20,26 @@ function Progresso(userOpts) {
 
 Progresso.prototype.start = function() {
   this.going = true;
+
   // ensure it is visible
   this.show();
-  this.increment(randomBetween(3, 7));
+
   // kick off a smooth loader...
   this.smooth();
 
   var self = this;
   // randomly increment at a random interval
   (function loop() {
-    if (!self.going) { return; }
-
     var time = randomBetween(500, 3e3); // between 500ms and 3s
     var inc = randomBetween(3, 10); // between 3% and 10%
 
     setTimeout(function () {
+      if (!self.going) { return; }
       self.increment(inc);
       loop();
     }, time);
   }());
+  return this;
 };
 
 Progresso.prototype.smooth = function () {
@@ -51,15 +52,19 @@ Progresso.prototype.smooth = function () {
 
     self.increment(1);
   }, 400);
+
+  return this;
 };
 
 Progresso.prototype.pause = function () {
   this.going = false;
+  return this;
 };
 
 Progresso.prototype.done = function () {
   this.goTo(100);
   this.pause();
+  return this;
 };
 
 Progresso.prototype.goTo = function (n) {
@@ -82,18 +87,22 @@ Progresso.prototype.goTo = function (n) {
   this.fill.style.width = n + '%';
   this.currentValue = n;
   this.trigger('change');
+  return this;
 };
 
 Progresso.prototype.increment = function (inc) {
   this.goTo(this.currentValue + inc);
+  return this;
 };
 
 Progresso.prototype.show = function () {
   this.wrapper.classList.add('progresso-show');
+  return this;
 };
 
 Progresso.prototype.hide = function () {
   this.wrapper.classList.remove('progresso-show');
+  return this;
 };
 
 /**

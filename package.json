@@ -17,6 +17,10 @@
   },
   "homepage": "https://github.com/schne324/progresso#readme",
   "devDependencies": {
-    "gulp": "^3.9.1"
+    "chai": "^3.5.0",
+    "gulp": "^3.9.1",
+    "gulp-mocha-phantomjs": "^0.11.0",
+    "mocha": "^3.0.2",
+    "mocha-phantomjs": "^4.1.0"
   }
 }
