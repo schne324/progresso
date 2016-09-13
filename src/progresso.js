@@ -1,17 +1,22 @@
 'use strict';
 
-var defaults = {}; // TODO: showClass, hideClass...
-var smoothInterval;
+var options = {
+  focus: true, // whether or not to focus on start
+  hideClass: null,
+  showClass: 'progresso-show',
+  wrapperClass: 'progresso-wrap',
+  fillClass: 'progresso-fill'
+};
 
 function Progresso(userOpts) {
   userOpts = userOpts || {};
-  // merge in defaults
+  // merge in user's options
   for (var attrname in userOpts) {
-    defaults[attrname] = userOpts[attrname];
+    options[attrname] = userOpts[attrname];
   }
 
-  this.options = defaults;
-  this.fill = createProgresso();
+  this.options = options;
+  this.fill = createProgresso(this.options);
   this.wrapper = this.fill.parentNode;
   this.going = false;
   this.currentValue = 0;
@@ -26,6 +31,10 @@ Progresso.prototype.start = function() {
 
   // kick off a smooth loader...
   this.smooth();
+
+  if (this.options.focus) {
+    this.wrapper.focus();
+  }
 
   var self = this;
   // randomly increment at a random interval
@@ -43,11 +52,13 @@ Progresso.prototype.start = function() {
 };
 
 Progresso.prototype.smooth = function () {
-  var self = this;
+  this.going = true;
 
-  smoothInterval = setInterval(function () {
+  var self = this;
+  var smoothInterval = setInterval(function () {
     if (!self.going) {
-      return clearInterval(smoothInterval);
+      clearInterval(smoothInterval);
+      return;
     }
 
     self.increment(1);
@@ -96,12 +107,20 @@ Progresso.prototype.increment = function (inc) {
 };
 
 Progresso.prototype.show = function () {
-  this.wrapper.classList.add('progresso-show');
+  if (this.options.hideClass) {
+    this.wrapper.classList.remove(this.options.hideClass);
+  }
+
+  this.wrapper.classList.add(this.options.showClass);
   return this;
 };
 
 Progresso.prototype.hide = function () {
-  this.wrapper.classList.remove('progresso-show');
+  if (this.options.hideClass) {
+    this.wrapper.classList.add(this.options.hideClass);
+  }
+
+  this.wrapper.classList.remove(this.options.showClass);
   return this;
 };
 
@@ -128,7 +147,7 @@ Progresso.prototype.trigger = function (eventType) {
   }
 };
 
-function createProgresso() {
+function createProgresso(opts) {
   var wrapper = document.createElement('div');
   var fill = document.createElement('div');
 
@@ -141,9 +160,12 @@ function createProgresso() {
     'aria-valuemax': '100'
   });
 
+  if (opts.focus) {
+    wrapper.tabIndex = -1;
+  }
 
-  wrapper.classList.add('progresso-wrap');
-  fill.classList.add('progresso-fill');
+  wrapper.classList.add(opts.wrapperClass || '');
+  fill.classList.add(opts.fillClass);
 
   document.body.appendChild(wrapper);
 

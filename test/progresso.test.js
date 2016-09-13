@@ -162,4 +162,44 @@ describe('progresso', function () {
       });
     });
   });
+
+  describe('options', function () {
+    var progWithOpts;
+
+    before(function () {
+      progWithOpts = new Progresso({
+        focus: true,
+        hideClass: 'boognish',
+        showClass: 'show',
+        wrapperClass: 'wrapper',
+        fillClass: 'fill'
+      });
+    });
+
+    after(function () {
+      progWithOpts.pause().hide();
+    });
+
+    describe('focus', function () {
+      it('should add tabindex="-1" to the wrapper', function () {
+        assert.equal(progWithOpts.wrapper.tabIndex, -1);
+      });
+
+      it('should focus the wrapper when `start` is called', function () {
+        progWithOpts.start();
+        assert.equal(document.activeElement, progWithOpts.wrapper);
+      });
+    });
+
+    describe('hideClass', function () {
+      it('should add the hide class when `hide` is called', function () {
+        progWithOpts.hide();
+        assert.isTrue(progWithOpts.wrapper.classList.contains('boognish'));
+      });
+      it('should remove the hide class when `show` is called', function () {
+        progWithOpts.hide().show();
+        assert.isFalse(progWithOpts.wrapper.classList.contains('boognish'));
+      });
+    });
+  });
 });
