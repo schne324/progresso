@@ -1,5 +1,6 @@
 'use strict';
 
+/* global Progresso */
 describe('progresso', function () {
   var prog;
   before(function () {
@@ -106,6 +107,12 @@ describe('progresso', function () {
         done();
       });
     });
+
+    it('should ensure visibility by calling show', function () {
+      prog.hide().start();
+      assert(prog.wrapper.classList.contains('progresso-show'));
+    });
+
     // TODO: somehow test the random increment at random interval...
   });
 
@@ -157,14 +164,14 @@ describe('progresso', function () {
         var fn = function () {};
         prog.on('bar', fn);
         assert.equal(prog.events.bar, fn);
-        prog.off('bar')
+        prog.off('bar');
         assert.isNull(prog.events.bar);
       });
     });
   });
 
   describe('options', function () {
-    var progWithOpts;
+    var progWithOpts, progWithDefaults;
 
     before(function () {
       progWithOpts = new Progresso({
@@ -174,10 +181,13 @@ describe('progresso', function () {
         wrapperClass: 'wrapper',
         fillClass: 'fill'
       });
+
+      progWithDefaults = new Progresso();
     });
 
     after(function () {
       progWithOpts.pause().hide();
+      progWithDefaults.pause().hide();
     });
 
     describe('focus', function () {
@@ -196,9 +206,47 @@ describe('progresso', function () {
         progWithOpts.hide();
         assert.isTrue(progWithOpts.wrapper.classList.contains('boognish'));
       });
+
       it('should remove the hide class when `show` is called', function () {
         progWithOpts.hide().show();
         assert.isFalse(progWithOpts.wrapper.classList.contains('boognish'));
+      });
+    });
+
+    describe('showClass', function () {
+      it('should add the show class when `show` is called', function () {
+        progWithOpts.hide().show();
+        assert.isTrue(progWithOpts.wrapper.classList.contains('show'));
+      });
+
+      it('should remove the show class when `hide` is called', function () {
+        progWithOpts.show().hide();
+        assert.isFalse(progWithOpts.wrapper.classList.contains('show'));
+      });
+
+      it('should default to "progresso-show"', function () {
+        progWithDefaults.show();
+        assert.isTrue(progWithDefaults.wrapper.classList.contains('progresso-show'));
+      });
+    });
+
+    describe('wrapperClass', function () {
+      it('should add the wrapperClass to the wrapper', function () {
+        assert.isTrue(progWithOpts.wrapper.classList.contains('wrapper'));
+      });
+
+      it('should default to "progresso-wrap"', function () {
+        assert.isTrue(progWithDefaults.wrapper.classList.contains('progresso-wrap'));
+      });
+    });
+
+    describe('fillClass', function () {
+      it('should add the fillClass to the fill element', function () {
+        assert.isTrue(progWithOpts.fill.classList.contains('fill'));
+      });
+
+      it('should default to "progresso-fill"', function () {
+        assert.isTrue(progWithDefaults.fill.classList.contains('progresso-fill'));
       });
     });
   });

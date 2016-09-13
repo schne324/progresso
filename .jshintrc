@@ -1,0 +1,14 @@
+{
+  "node": true,
+  "predef": [
+    "it",
+    "describe",
+    "before",
+    "beforeEach",
+    "after",
+    "afterEach",
+    "assert",
+    "window",
+    "document"
+  ]
+}

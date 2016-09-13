@@ -10,12 +10,8 @@ var options = {
 
 function Progresso(userOpts) {
   userOpts = userOpts || {};
-  // merge in user's options
-  for (var attrname in userOpts) {
-    options[attrname] = userOpts[attrname];
-  }
-
-  this.options = options;
+  // merge user's options in to defaults
+  this.options = mergeOptions(options, userOpts);
   this.fill = createProgresso(this.options);
   this.wrapper = this.fill.parentNode;
   this.going = false;
@@ -181,4 +177,12 @@ function setAttrs(element, attrs) {
 
 function randomBetween(min, max) {
   return Math.floor(Math.random() * max) + min;
+}
+
+
+function mergeOptions(defaults, userOpts){
+  var merged = {};
+  for (var attrname in defaults) { merged[attrname] = defaults[attrname]; }
+  for (var atName in userOpts) { merged[atName] = userOpts[atName]; }
+  return merged;
 }
