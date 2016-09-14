@@ -4,7 +4,7 @@
   width: 100%;
   top: 0;
   left: 0;
-  height: 3px;
+  height: 4px;
 }
 
 .progresso-wrap.progresso-show {
@@ -17,9 +17,18 @@
   left: 0;
   bottom: 0;
   width: 0;
-  background-color: #333;
+  background-color: #f00;
   -webkit-transition: all .4s ease-in;
   -moz-transition: all .4s ease-in;
   -o-transition: all .4s ease-in;
   transition: all .4s ease-in;
+}
+
+.progresso-offscreen {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(1px 1px 1px 1px);
+  clip: rect(1px, 1px, 1px, 1px);
 }

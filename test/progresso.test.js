@@ -179,7 +179,11 @@ describe('progresso', function () {
         hideClass: 'boognish',
         showClass: 'show',
         wrapperClass: 'wrapper',
-        fillClass: 'fill'
+        fillClass: 'fill',
+        text: {
+          class: 'offscreener',
+          content: 'Yo the loading is like $1 percent completed'
+        }
       });
 
       progWithDefaults = new Progresso();
@@ -247,6 +251,30 @@ describe('progresso', function () {
 
       it('should default to "progresso-fill"', function () {
         assert.isTrue(progWithDefaults.fill.classList.contains('progresso-fill'));
+      });
+    });
+
+    describe('text', function () {
+      it('should create the element', function () {
+        assert.equal('object', typeof progWithDefaults.wrapper.querySelector('.progresso-offscreen'));
+      });
+
+      it('should store the element as instance.offscreen', function () {
+        var t = progWithDefaults.wrapper.querySelector('.progresso-offscreen');
+        assert.equal(t, progWithDefaults.offscreen);
+      });
+
+      it('should add the right text / class (default)', function () {
+        progWithDefaults.goTo(57);
+        assert.equal('Loading 57% complete', progWithDefaults.offscreen.innerHTML);
+        assert.isTrue(progWithDefaults.fill.classList.contains('progresso-fill'));
+      });
+
+      it('should add the right text / class (options passed in)', function () {
+        progWithOpts.goTo(77);
+        assert.equal(progWithOpts.offscreen.innerHTML, 'Yo the loading is like 77 percent completed');
+        assert.isTrue(progWithOpts.offscreen.classList.contains('offscreener'));
+        progWithOpts.hide();
       });
     });
   });

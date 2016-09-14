@@ -5,7 +5,11 @@ var options = {
   hideClass: null,
   showClass: 'progresso-show',
   wrapperClass: 'progresso-wrap',
-  fillClass: 'progresso-fill'
+  fillClass: 'progresso-fill',
+  text: {
+    class: 'progresso-offscreen',
+    content: 'Loading $1% complete'
+  }
 };
 
 function Progresso(userOpts) {
@@ -14,36 +18,40 @@ function Progresso(userOpts) {
   this.options = mergeOptions(options, userOpts);
   this.fill = createProgresso(this.options);
   this.wrapper = this.fill.parentNode;
+  this.offscreen = this.options.text && this.wrapper.querySelector('.' + this.options.text.class);
   this.going = false;
   this.currentValue = 0;
   this.events = {};
 }
 
-Progresso.prototype.start = function() {
+Progresso.prototype.start = function (totalLoadTime) {
   this.going = true;
 
   // ensure it is visible
   this.show();
 
   // kick off a smooth loader...
-  this.smooth();
+  this.smooth(totalLoadTime);
 
   if (this.options.focus) {
     this.wrapper.focus();
   }
 
-  var self = this;
-  // randomly increment at a random interval
-  (function loop() {
-    var time = randomBetween(500, 3e3); // between 500ms and 3s
-    var inc = randomBetween(3, 10); // between 3% and 10%
+  if (!totalLoadTime) {
+    var self = this;
+    // randomly increment at a random interval
+    (function loop() {
+      var time = randomBetween(500, 3e3); // between 500ms and 3s
+      var inc = randomBetween(3, 10); // between 3% and 10%
 
-    setTimeout(function () {
-      if (!self.going) { return; }
-      self.increment(inc);
-      loop();
-    }, time);
-  }());
+      setTimeout(function () {
+        if (!self.going) { return; }
+        self.increment(inc);
+        loop();
+      }, time);
+    }());
+  }
+
   return this;
 };
 
@@ -93,6 +101,9 @@ Progresso.prototype.goTo = function (n) {
   this.wrapper.setAttribute('aria-valuenow', n);
   this.fill.style.width = n + '%';
   this.currentValue = n;
+  if (this.options.text) {
+    setText(this.offscreen, this.options.text.content, n);
+  }
   this.trigger('change');
   return this;
 };
@@ -150,18 +161,29 @@ function createProgresso(opts) {
   wrapper.appendChild(fill);
 
   setAttrs(wrapper, {
-    role: 'progressbar',
+    'role': 'progressbar',
     'aria-valuenow': '0',
     'aria-valuemin': '0',
-    'aria-valuemax': '100'
+    'aria-valuemax': '100',
+    'aria-readonly': 'true',
+    'aria-live': 'polite',
+    'aria-atomic': 'false',
+    'aria-relevant': 'text'
   });
 
   if (opts.focus) {
     wrapper.tabIndex = -1;
   }
 
-  wrapper.classList.add(opts.wrapperClass || '');
+  wrapper.classList.add(opts.wrapperClass);
   fill.classList.add(opts.fillClass);
+
+  if (opts.text) {
+    var textDiv = document.createElement('div');
+    textDiv.classList.add(opts.text.class);
+    setText(textDiv, opts.text.content, '0');
+    wrapper.appendChild(textDiv);
+  }
 
   document.body.appendChild(wrapper);
 
@@ -179,6 +201,13 @@ function randomBetween(min, max) {
   return Math.floor(Math.random() * max) + min;
 }
 
+function setText(el, placeholder, replacee) {
+  el.innerHTML = replacer(placeholder, replacee);
+}
+
+function replacer(placeholder, replacee) {
+  return placeholder.replace(/\$\d/g, replacee);
+}
 
 function mergeOptions(defaults, userOpts){
   var merged = {};

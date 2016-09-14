@@ -10,17 +10,21 @@ $ bower install progresso
 Just include `progresso.css` and `progresso.js`.
 
 ```html
-<link rel='stylesheet' href='bower_components/progresso.css' />
-<script src="bower_components/progresso.js"></script>
-<script>
-var progress = new Progresso();
-progress.start();
-</script>
+<head>
+  <link rel='stylesheet' href='bower_components/progresso.css' />
+</head>
+<body>
+  <script src="bower_components/progresso.js"></script>
+  <script>
+  var progress = new Progresso();
+  progress.start();
+  </script>
+</body>
 ```
 
 ## Options
 * `focus` (_Boolean_): Whether or not to focus the progress bar when loading starts
-  * Defaults to `true`
+  * Defaults to `false`
 * `hideClass` (_String_): Class to be added to the progress bar when it is hidden
 * `showClass` (_String): Class to be added when progress bar is showing
   * Defaults to `"progresso-show"`
@@ -28,6 +32,28 @@ progress.start();
   * Defaults to `"progresso-wrap`
 * `fillClass` (_String_): Class to be added to the fill element (`Progresso.fill`)
   * Defaults to `"progresso-fill"`
+* `text` (_Object_): The configuration object for the offscreen text within the loader (`Progresso.offscreen`)
+  * `text.class`: The class to be added to the offscreen element within the wrapper
+    * Defaults to `'progresso-offscreen'`
+  * `text.content`: The text to be added to the offscreen element.  This text uses `$1` to be replaced with the given percent value of progress.
+    * Defaults to `'Loading $1% complete'` (meaning when the progress bar is at 11%, the text content of the offscreen element would be `'Loading 11% complete'`)
+
+### Example Progresso call with options
+
+```js
+var progress = new Progresso({
+  focus: true,
+  hideClass: 'hidden',
+  showClass: 'showing',
+  wrapperClass: 'progressbar-container', // NOTE: if you use different classes, you'll have to roll your own css or edit progresso.css
+  fillClass: 'progressbar-fill',
+  text: {
+    class: 'sr-only',
+    content: 'Page loading: $1'
+  }
+});
+```
+
 
 ## Methods
 * `Progresso#goTo`: Accepts a number (0 - 100) in which the progress bar will go to (%). Example: `progress.goTo(5); // set the progress bar to 5%`
@@ -41,9 +67,9 @@ Add an event listener with `.on`, remove event listener with `.off` (see example
 * `change`: fires when progress changes
 
 ```js
-var progresso = new Progresso();
+var progress = new Progresso();
 
-progresso
+progress
   .on('change', function () {
     console.log('stuff has changed and stuff');
   })
