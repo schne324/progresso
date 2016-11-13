@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Progresso sandbox</title>
+    <link rel="stylesheet" type="text/css" href="../src/progresso.css">
+    <style>
+      .err {
+        color: #f00;
+      }
+
+      #change-log {
+        height: 150px;
+        max-height: 150px;
+        border: 1px solid;
+        overflow: auto;
+        width: 250px;
+      }
+      .help {
+        font-style: italic;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Progresso</h1>
+
+    <h2>Progresso#start</h2>
+    <button data-action="start" type="button">Trigger random progress</button>
+    <div class="help">Triggers random increments at a random intervals to simulate real loading.</div>
+
+    <h2>Progresso#goTo</h2>
+    <label id="go-to-label">
+      <span>Go to:</span>
+      <input type="text" id="go-to" />
+      <div class="help">Enter a number</div>
+    </label>
+    <button data-action="go-to" type="button">Go!</button>
+
+    <h2>Reset (progresso.goTo(0))</h2>
+    <button data-action="reset" type="button">Reset</button>
+    <div class="help">Clears the log too</div>
+
+    <h2>"change" event log</h2>
+    <div id="change-log" role="log" aria-live="polite"></div>
+
+    <script src="../src/progresso.js"></script>
+
+    <script>
+      var progresso = new Progresso();
+      var startButton = getButtonByAction('start');
+      var goToButton = getButtonByAction('go-to');
+      var goToInput = document.getElementById('go-to');
+      var goToLabel = document.getElementById('go-to-label');
+      var goToHelp = goToLabel.querySelector('.help');
+      var changeLog = document.getElementById('change-log');
+      var resetButton = getButtonByAction('reset');
+
+      startButton.addEventListener('click', function () {
+        startButton.setAttribute('disabled', 'true');
+        progresso.pause().goTo(0).start();
+      });
+
+      goToInput.addEventListener('keydown', function (e) {
+        if (e.which === 13) {
+          goToButton.click();
+        }
+      });
+
+      goToButton.addEventListener('click', function () {
+        var value = goToInput.value;
+        if (!value || isNaN(value)) {
+          goToHelp.classList.add('err');
+          goToInput.setAttribute('aria-invalid', 'true');
+          return;
+        }
+        // clean up previous errors
+        goToHelp.classList.remove('err');
+        goToInput.removeAttribute('aria-invalid');
+
+        progresso.show().pause().goTo(parseInt(value));
+      });
+
+      resetButton.addEventListener('click', function () {
+        progresso.show().goTo(0);
+        changeLog.innerHTML = '';
+      });
+
+      progresso.on('change', function () {
+        var div = document.createElement('div');
+        div.innerHTML = 'Change fired. Current value: ' + progresso.currentValue;
+        changeLog.appendChild(div);
+        if (progresso.currentValue === 100) {
+          startButton.removeAttribute('disabled');
+        }
+      });
+
+      function getButtonByAction(action) {
+        return document.querySelector('button[data-action="' + action + '"]');
+      }
+    </script>
+  </body>
+</html>

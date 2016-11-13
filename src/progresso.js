@@ -1,7 +1,7 @@
 'use strict';
 
 var options = {
-  focus: true, // whether or not to focus on start
+  focus: false, // focus on start (default to false because live region is probably enough)
   hideClass: null,
   showClass: 'progresso-show',
   wrapperClass: 'progresso-wrap',
@@ -135,6 +135,8 @@ Progresso.prototype.hide = function () {
  * Events
  */
 
+// NOTE: singleton (only 1 event per type)
+// probably should just use emitter for this...
 Progresso.prototype.on = function (eventType, fn) {
   this.events[eventType] = fn;
   return this;
